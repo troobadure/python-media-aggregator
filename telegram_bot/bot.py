@@ -13,16 +13,6 @@ dp = Dispatcher(bot)
 dp.middleware.setup(LoggingMiddleware())
 
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    logging.warning(f'Recieved a message from {message.from_user}')
-    await bot.send_message(message.chat.id, 'Wat do u mean ' + message.text)
-
-# @dp.message_handler(commands = ['add_profile'])
-# async def echo(message: types.Message):
-#     logging.warning(f'Recieved a message from {message.from_user}')
-#     await bot.send_message(message.chat.id, 'Wat do u mean ' + message.text)
-
 @dp.message_handler(commands = ['add_profile'])
 async def add_profile(message):
     await check_owner(message)
@@ -36,6 +26,12 @@ async def add_profile(message):
         json.dump(data, jsonFile)
 
     bot.send_message(message.chat.id, '*profile added*')
+
+
+@dp.message_handler()
+async def echo(message: types.Message):
+    logging.warning(f'Recieved a message from {message.from_user}')
+    await bot.send_message(message.chat.id, 'Wat do u mean ' + message.text)
 
 
 async def check_owner(message):
