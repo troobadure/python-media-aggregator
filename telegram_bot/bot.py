@@ -16,7 +16,7 @@ dp.middleware.setup(LoggingMiddleware())
 @dp.message_handler(commands = ['add_profile'])
 async def add_profile(message):
     await check_owner(message)
-    bot.send_chat_action(message.chat.id, 'typing')
+    await bot.send_chat_action(message.chat.id, 'typing')
 
     with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
         data = json.load(jsonFile)
@@ -25,7 +25,7 @@ async def add_profile(message):
     with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
         json.dump(data, jsonFile)
 
-    bot.send_message(message.chat.id, '*profile added*')
+    await bot.send_message(message.chat.id, '*profile added*')
 
 
 @dp.message_handler()
@@ -39,7 +39,7 @@ async def check_owner(message):
         warning = ('!!!STRANGER DETECTED!!!\n'
         'username={0} chat_id={1}').format(message.chat.username, message.chat.id)
         print(warning)
-        bot.send_message('402027899', warning)
+        await bot.send_message('402027899', warning)
         exit()
 
 
