@@ -19,27 +19,27 @@ async def echo(message: types.Message):
     await bot.send_message(message.chat.id, 'Wat do u mean ' + message.text)
 
 
-@dp.message_handler(commands = ['add_profile'])
-async def add_profile(message):
-    await check_owner(message)
-    await bot.send_chat_action(message.chat.id, 'typing')
+# @dp.message_handler(commands = ['add_profile'])
+# async def add_profile(message):
+#     await check_owner(message)
+#     await bot.send_chat_action(message.chat.id, 'typing')
 
-    with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
-        data = json.load(jsonFile)
-        data['profiles'].append({'name': message.text.split()[1], 'likes': 0})
+#     with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
+#         data = json.load(jsonFile)
+#         data['profiles'].append({'name': message.text.split()[1], 'likes': 0})
 
-    with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
-        json.dump(data, jsonFile)
+#     with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
+#         json.dump(data, jsonFile)
 
-    await bot.send_message(message.chat.id, '*profile added*')
+#     await bot.send_message(message.chat.id, '*profile added*')
 
 
-async def check_owner(message):
-    if message.from_user.username != 'troobadure2':
-        warning = ('!!!STRANGER DETECTED!!!\n'
-        'username={0} chat_id={1}').format(message.chat.username, message.chat.id)
-        print(warning)
-        await bot.send_message('402027899', warning)
+# async def check_owner(message):
+#     if message.from_user.username != 'troobadure2':
+#         warning = ('!!!STRANGER DETECTED!!!\n'
+#         'username={0} chat_id={1}').format(message.chat.username, message.chat.id)
+#         print(warning)
+#         await bot.send_message('402027899', warning)
 
 
 async def on_startup(dp):
