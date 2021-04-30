@@ -40,7 +40,7 @@ async def check_owner(message):
         'username={0} chat_id={1}').format(message.chat.username, message.chat.id)
         print(warning)
         await bot.send_message('402027899', warning)
-        exit()
+        await bot.stop_poll()
 
 
 async def on_startup(dp):
