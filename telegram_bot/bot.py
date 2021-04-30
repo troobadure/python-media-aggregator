@@ -15,7 +15,7 @@ dp.middleware.setup(LoggingMiddleware())
 
 @dp.message_handler(commands = ['add_profile'])
 async def add_profile(message):
-    await check_owner(message)
+    # await check_owner(message)
     await bot.send_chat_action(message.chat.id, 'typing')
 
     with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
