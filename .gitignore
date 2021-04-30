@@ -2,3 +2,4 @@
 env
 notes.txt
 db_proto
+__pycache__
