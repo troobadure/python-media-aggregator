@@ -2,7 +2,7 @@ import telebot
 import glob
 import json
 
-bot = telebot.TeleBot('1762338268:AAGZ-sXVZjHK9nm2nEXSgBPIbxZxEdUwTWA')
+bot = telebot.TeleBot('')
 
 skipped = 0
 
