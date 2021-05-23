@@ -4,9 +4,13 @@ from aiogram import Bot, types
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
-from telegram_bot.settings import (BOT_TOKEN, HEROKU_APP_NAME,
+from telegram_bot.settings import (BOT_TOKEN, DATABASE_URL, HEROKU_APP_NAME,
                           WEBHOOK_URL, WEBHOOK_PATH,
                           WEBAPP_HOST, WEBAPP_PORT)
+import psycopg2
+
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')     
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
