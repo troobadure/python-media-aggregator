@@ -20,6 +20,15 @@ dp.middleware.setup(LoggingMiddleware())
 @dp.message_handler()
 async def echo(message: types.Message):
     logging.warning(f'Recieved a message from {message.from_user}')
+    cursor = conn.cursor()
+    try:
+        sql_insert = 'INSERT INTO public.users (user_id) VALUES (\'%s\'::character varying);'
+        cursor.execute(sql_insert, str(message.from_user.id))
+        conn.commit()
+    except Exception as e:
+        print(e)
+    cursor.close()
+    conn.close()
     await bot.send_message(message.chat.id, 'Wat do u mean ' + message.text)
 
 
