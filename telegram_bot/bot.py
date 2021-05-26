@@ -3,10 +3,13 @@ import logging
 from aiogram import Bot, types
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.dispatcher import Dispatcher
-from aiogram.utils.executor import start_webhook
-from telegram_bot.settings import (BOT_TOKEN, DATABASE_URL, HEROKU_APP_NAME,
-                          WEBHOOK_URL, WEBHOOK_PATH,
-                          WEBAPP_HOST, WEBAPP_PORT)
+from aiogram.utils.executor import start_polling, start_webhook
+from settings import (BOT_TOKEN, DATABASE_URL)
+
+# ,
+                        #   WEBHOOK_URL, WEBHOOK_PATH,
+                        #   WEBAPP_HOST, WEBAPP_PORT
+
 import psycopg2
 
 
@@ -23,7 +26,7 @@ async def echo(message: types.Message):
     cursor = conn.cursor()
     try:
         sql_insert = 'INSERT INTO public.users (user_id) VALUES (\'%s\'::character varying);'
-        cursor.execute(sql_insert, str(message.from_user.id))
+        cursor.execute(sql_insert % (message.from_user.username))
         conn.commit()
     except Exception as e:
         print(e)
@@ -55,23 +58,26 @@ async def echo(message: types.Message):
 #         await bot.send_message('402027899', warning)
 
 
-async def on_startup(dp):
-    logging.warning(
-        'Starting webhook connection.')
-    await bot.set_webhook(WEBHOOK_URL,drop_pending_updates=True)
+# async def on_startup(dp):
+#     logging.warning(
+#         'Starting webhook connection.')
+#     await bot.set_webhook(WEBHOOK_URL,drop_pending_updates=True)
 
 
-async def on_shutdown(dp):
-    logging.warning('Shutting down webhook connection')
+# async def on_shutdown(dp):
+#     logging.warning('Shutting down webhook connection')
 
 
-def main():
-    logging.basicConfig(level=logging.INFO)
-    start_webhook(
-        dispatcher=dp,
-        webhook_path=WEBHOOK_PATH,
-        skip_updates=True,
-        on_startup=on_startup,
-        host=WEBAPP_HOST,
-        port=WEBAPP_PORT,
-    )
+# def main():
+#     logging.basicConfig(level=logging.INFO)
+#     start_webhook(
+#         dispatcher=dp,
+#         webhook_path=WEBHOOK_PATH,
+#         skip_updates=True,
+#         on_startup=on_startup,
+#         host=WEBAPP_HOST,
+#         port=WEBAPP_PORT,
+#     )
+
+if __name__ == '__main__':
+    start_polling(dp)
