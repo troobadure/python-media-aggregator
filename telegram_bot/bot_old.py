@@ -1,8 +1,19 @@
 import telebot
 import glob
 import json
+import os
+import psycopg2
 
-bot = telebot.TeleBot('')
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')     
+
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+DATABASE_URL = os.getenv('DATABASE_URL')
+if not BOT_TOKEN:
+    print('You have not set BOT_TOKEN')
+    quit()
+bot = telebot.TeleBot(BOT_TOKEN)
 
 skipped = 0
 
@@ -11,6 +22,15 @@ settingLikes = False
 
 @bot.message_handler(commands = ['get_post'])
 def get_post(message):
+    cursor = conn.cursor()
+    try:
+        sql_insert = 'INSERT INTO public.users (user_id) VALUES (\'%s\'::character varying);'
+        cursor.execute(sql_insert % (message.from_user.username))
+        conn.commit()
+    except Exception as e:
+        print(e)
+    cursor.close()
+    conn.close()
     check_owner(message)
     global skipped
     bot.send_chat_action(message.chat.id, 'typing')
