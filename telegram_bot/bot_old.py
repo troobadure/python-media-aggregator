@@ -133,16 +133,5 @@ def check_owner(message):
         bot.stop_polling()
         exit()
 
-# with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
-#     data = json.load(jsonFile)
 
-#     data['profiles'].append({'name': 'name2', 'likes': 0})
-
-#     for profile in data['profiles']:
-#         if (profile["name"] == 'name2'):
-#             profile["likes"] = 5
-#             break
-
-#     with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
-#         json.dump(data, jsonFile)
 bot.polling(none_stop = True)
