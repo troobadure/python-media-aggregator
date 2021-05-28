@@ -1,0 +1,1 @@
+run: python telegram_bot\bot_telebot.py

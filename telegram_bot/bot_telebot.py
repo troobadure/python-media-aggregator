@@ -3,7 +3,7 @@ import glob
 import json
 import os
 import psycopg2
-
+from loader import main
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')     
@@ -24,7 +24,7 @@ settingLikes = False
 def get_post(message):
     cursor = conn.cursor()
     try:
-        sql_insert = 'INSERT INTO public.users (user_id) VALUES (\'%s\'::character varying);'
+        sql_insert = 'INSERT INTO public.users (id) VALUES (\'%s\'::character varying);'
         cursor.execute(sql_insert % (message.from_user.username))
         conn.commit()
     except Exception as e:
@@ -84,6 +84,14 @@ def set_likes(message):
     bot.send_chat_action(message.chat.id, 'typing')
     settingLikes = True
     bot.reply_to(message, '*write the profile name*')
+
+@bot.message_handler(commands = ['fetch_posts'])
+def fetch_posts(message):
+    check_owner(message)
+    bot.send_chat_action(message.chat.id, 'typing')
+    bot.reply_to(message, '*starting fetch*')
+    main()
+    bot.reply_to(message, '*finishing fetch*')
 
 @bot.message_handler()
 def test_message_handler(message):

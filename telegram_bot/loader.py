@@ -17,7 +17,7 @@ def main():
     loader = Instaloader_parameters('_{score}_{target}_{date_utc}')
     loader.login_paremeters()
     profiles = set(map(lambda name: Profile.from_username(loader.context, name), names))
-    loader.download_profiles_custom_parameters(profiles, date_filter_factory(datetime.now()-timedelta(days=300)), post_filter_factory(15))
+    loader.download_profiles_custom_parameters(profiles, date_filter_factory(datetime.now()-timedelta(days=1500)), post_filter_factory(15))
     
 def login_paremeters(self):
     return self.login('dankmemeloader', 'loaderdankmeme')
@@ -28,7 +28,7 @@ def Instaloader_parameters(filename='{target}_{date_utc:%Y-%m-%d_%H-%M}'):
     filename_pattern=filename, download_pictures=True, download_videos=True, 
     download_video_thumbnails=False, download_geotags=False, download_comments=False, save_metadata=True, compress_json=False, 
     post_metadata_txt_pattern='{caption}\n_________\nLIKES: {likes}\nVIEWS: {video_view_count}\nCOMMENTS: {comments}', 
-    storyitem_metadata_txt_pattern=None, max_connection_attempts=3, request_timeout=None, commit_mode=False)
+    storyitem_metadata_txt_pattern=None, max_connection_attempts=3, request_timeout=None) #, commit_mode=False)
     # defaults:
     # sleep=True, quiet=False, user_agent=None, dirname_pattern=None, 
     # filename_pattern=None, download_pictures=True, download_videos=True, download_video_thumbnails=True, 
@@ -237,7 +237,7 @@ def download_post_custom(self, post: Post, target: Union[str, Path]) -> bool:
 
     # Download the image(s) / video thumbnail and videos within sidecars if desired
     downloaded = True
-    self._committed = self.check_if_committed(filename)
+    # self._committed = self.check_if_committed(filename)
     if self.download_pictures:
         if post.typename == 'GraphSidecar':
             edge_number = 1
