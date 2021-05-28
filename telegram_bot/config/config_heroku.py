@@ -1,5 +1,5 @@
 import os
-from config.config import BOT_TOKEN
+import config.config
 
 HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
 
