@@ -1,5 +1,5 @@
 .vscode
 .env
-notes.txt
-db_proto
 __pycache__
+notes.txt
+.files/*

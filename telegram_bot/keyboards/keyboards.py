@@ -8,7 +8,7 @@ main_menu_keyboard_add_criteria_button = telebot.types.KeyboardButton("add crite
 main_menu_keyboard.add(main_menu_keyboard_fetch_posts_button, main_menu_keyboard_get_post_button)
 main_menu_keyboard.add(main_menu_keyboard_add_profile_button, main_menu_keyboard_add_criteria_button)
 
-# add_users
+# add_profile
 add_profile_inline_keyboard = telebot.types.InlineKeyboardMarkup()
 add_profile_inline_button_insta = telebot.types.InlineKeyboardButton(text='Instagram',
                                                                      callback_data='add_profile_instagram')
@@ -32,6 +32,6 @@ add_criteria_inline_keyboard.add(add_criteria_inline_button_insta)
 add_criteria_inline_keyboard.add(add_criteria_inline_button_facebook)
 add_criteria_inline_keyboard.add(add_criteria_inline_button_youtube)
 
-# cancel keyb
+# cancel keyboard
 cancel_keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
 cancel_keyboard.add('Отмена')
