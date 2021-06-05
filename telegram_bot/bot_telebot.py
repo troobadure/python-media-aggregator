@@ -6,7 +6,7 @@ import psycopg2
 # import config.config_heroku
 from keyboards import keyboards
 from db import dbmanager
-from loader import main
+from loaders.loader import main
 import time
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
