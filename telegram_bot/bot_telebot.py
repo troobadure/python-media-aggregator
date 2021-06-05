@@ -4,144 +4,151 @@ import json
 import os
 import psycopg2
 # import config.config_heroku
+from keyboards import keyboards
+from db import dbmanager
 from loader import main
+import time
 
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')     
-
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-DATABASE_URL = os.getenv('DATABASE_URL')
-if not BOT_TOKEN:
-    print('You have not set BOT_TOKEN')
-    quit()
 bot = telebot.TeleBot(BOT_TOKEN)
+dbmanager.init_db()
 
-skipped = 0
+@bot.message_handler(commands=['start', 'START'])
+def start_message(message):
+    user_name = message.from_user.first_name
 
-currentProfile = ''
-settingLikes = False
+    if message.from_user.last_name:
+        user_name = f"{user_name} {message.from_user.last_name}"
 
-@bot.message_handler(commands = ['get_post'])
-def get_post(message):
-    cursor = conn.cursor()
-    try:
-        sql_insert = 'INSERT INTO public.users (id) VALUES (\'%s\'::character varying);'
-        cursor.execute(sql_insert % (message.from_user.username))
-        conn.commit()
-    except Exception as e:
-        print(e)
-    cursor.close()
-    conn.close()
-    check_owner(message)
-    global skipped
-    bot.send_chat_action(message.chat.id, 'typing')
+    bot.send_message(message.chat.id,
+                     f"Hellol, {user_name}",
+                     reply_markup=keyboards.main_menu_keyboard)
 
-    filename = glob.glob('telegram_bot/db_proto/content/*.mp4')[0]
-    video = open(filename, 'rb')
-    bot.send_video(message.chat.id, video)
-    skipped += 1
+    dbmanager.register_user(message.chat.id,
+                            user_name,
+                            'main_menu',
+                            time.strftime('%d/%m/%y, %X'),
+                            time.strftime('%d/%m/%y, %X'))
 
-@bot.message_handler(commands = ['add_profile'])
-def add_profile(message):
-    check_owner(message)
-    bot.send_chat_action(message.chat.id, 'typing')
 
-    with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
-        data = json.load(jsonFile)
-        data['profiles'].append({'name': message.text.split()[1], 'likes': 0})
-
-    with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
-        json.dump(data, jsonFile)
-
-    bot.reply_to(message, '*profile added*')
-    
-
-@bot.message_handler(commands = ['remove_profile'])
-def remove_profile(message):
-    check_owner(message)
-    bot.send_chat_action(message.chat.id, 'typing')
-
-    found = False
-    with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
-        data = json.load(jsonFile)         
-        for i in range(len(data['profiles'])):
-            if data['profiles'][i]['name'] == message.text.split()[1]:
-                found = True
-                data['profiles'].pop(i)
-                break
-        
-    if found:
-        with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
-            json.dump(data, jsonFile)
-
-        bot.reply_to(message, '*profile removed*')
-    else:
-        bot.reply_to(message, '*profile not found*')
-
-@bot.message_handler(commands = ['set_likes'])
-def set_likes(message):
-    global settingLikes
-    check_owner(message)
-    bot.send_chat_action(message.chat.id, 'typing')
-    settingLikes = True
-    bot.reply_to(message, '*write the profile name*')
-
-@bot.message_handler(commands = ['fetch_posts'])
+@bot.message_handler(func=lambda message: message.text == 'fetch posts')
 def fetch_posts(message):
-    check_owner(message)
-    bot.send_chat_action(message.chat.id, 'typing')
-    bot.reply_to(message, '*starting fetch*')
-    main()
-    bot.reply_to(message, '*finishing fetch*')
+    user_name = message.from_user.first_name
 
-@bot.message_handler()
-def test_message_handler(message):
-    global settingLikes, currentProfile
-    check_owner(message)
-    if settingLikes:
-        if message.text == '':
-            settingLikes = False
-            currentProfile = False
-            bot.reply_to(message, 'input cannot be empty')
-            exit()
+    if message.from_user.last_name:
+        user_name = f"{user_name} {message.from_user.last_name}"
 
-        if currentProfile == '':
-            currentProfile = message.text
-            bot.reply_to(message, 'write likes')
-        else:
-            found = False
-            with open('telegram_bot/db_proto/profiles.json', 'r') as jsonFile:
-                data = json.load(jsonFile)
-                for profile in data['profiles']:
-                    if (profile["name"] == currentProfile):
-                        found = True
-                        profile["likes"] = message.text
-                        break
-            
-            settingLikes = False
-            currentProfile = False
-            if found:
-                with open('telegram_bot/db_proto/profiles.json', 'w') as jsonFile:
-                    json.dump(data, jsonFile)
+    dbmanager.update_state(user_name,
+                           'main_menu',
+                           time.strftime('%d/%m/%y, %X'),
+                           message.chat.id)
 
-                bot.reply_to(message, 'likes set')
-            else:
-                bot.reply_to(message, 'profile not found')
+    bot.send_message(message.from_user.id,
+                     '<b>(В РАЗРАБОТКЕ)</b>',
+                     reply_markup=keyboards.main_menu_keyboard,
+                     parse_mode='HTML')
+
+
+@bot.message_handler(func=lambda message: message.text == 'get post')
+def get_post(message):
+    user_name = message.from_user.first_name
+
+    if message.from_user.last_name:
+        user_name = f"{user_name} {message.from_user.last_name}"
+
+    dbmanager.update_state(user_name,
+                           'main_menu',
+                           time.strftime('%d/%m/%y, %X'),
+                           message.chat.id)
+
+    video = open(
+        "/home/leap_sunrise/python-media-aggregatorq/telegram_bot/db_proto/content/_score_shadowguy.__2020-10-04_14-38-25_1.mp4",
+        'rb')
+    bot.send_message(message.chat.id,
+                     'Видео обрабатывается...',
+                     reply_markup=keyboards.main_menu_keyboard)
+
+    bot.send_video(message.chat.id, video, timeout=60, reply_markup=keyboards.main_menu_keyboard)
+    bot.delete_message(message.chat.id,
+                       message.message_id + 1)
+    video.close()
+
+
+@bot.message_handler(func=lambda message: message.text == 'add profile')
+def add_profile(message):
+    user_name = message.from_user.first_name
+
+    if message.from_user.last_name:
+        user_name = f"{user_name} {message.from_user.last_name}"
+
+    dbmanager.update_state(user_name,
+                           'main_menu',
+                           time.strftime('%d/%m/%y, %X'),
+                           message.chat.id)
+
+    bot.send_message(message.chat.id,
+                     'Выбери соц. сеть',
+                     reply_markup=keyboards.add_profile_inline_keyboard)
+
+    print(dbmanager.get_state(message.chat.id)[0])
+
+
+@bot.message_handler(func=lambda message: message.text == 'add criteria')
+def add_criteria(message):
+    user_name = message.from_user.first_name
+
+    if message.from_user.last_name:
+        user_name = f"{user_name} {message.from_user.last_name}"
+
+    dbmanager.update_state(user_name,
+                           'main_menu',
+                           time.strftime('%d/%m/%y, %X'),
+                           message.chat.id)
+
+    bot.send_message(message.chat.id,
+                     'Добавь критерию',
+                     reply_markup=keyboards.add_criteria_inline_keyboard)
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('add_'))
+def picking_inst_soc(call):
+
+    if call.data.startswith('add_profile'):
+        dbmanager.update_state('🇫🇮🌲',
+                               f"inserting{call.data[call.data.find('_')::]}",
+                               time.strftime('%d/%m/%y, %X'),
+                               call.message.chat.id)
+
+        bot.send_message(call.message.chat.id,
+                         f"Введи юзернейм профиля из {(call.data[call.data.find('_') + 9::]).capitalize()}",
+                         reply_markup=keyboards.cancel_keyboard)
+
+        print(dbmanager.get_state(call.message.chat.id))
+
+
+# curr_state == inserting inst uname
+@bot.message_handler(func=lambda message: (dbmanager.get_state(message.chat.id)).startswith('inserting_profile'))
+def inserting_inst_uname(message):
+
+    if message.text == 'Отмена':
+        dbmanager.update_state('🇫🇮🌲',
+                               'main_menu',
+                               time.strftime('%d/%m/%y, %X'),
+                               message.chat.id)
+        bot.send_message(message.chat.id,
+                         'Главное меню',
+                         reply_markup=keyboards.main_menu_keyboard)
+
     else:
-        bot.reply_to(message, 'message_handler invoked')
+        bot.send_message(message.chat.id,
+                         'В РАЗРАБОТКЕ',
+                         reply_markup=keyboards.cancel_keyboard)
+        dbmanager.update_state('LOH',
+                               'inserting_instagram_us',
+                               time.strftime('%d/%m/%y, %X'),
+                               message.chat.id)
 
 
 
-
-def check_owner(message):
-    if message.from_user.username != 'troobadure':
-        warning = ('!!!STRANGER DETECTED!!!\n'
-        'username={0} chat_id={1}').format(message.chat.username, message.chat.id)
-        print(warning)
-        bot.send_message('402027899', warning)
-        bot.stop_polling()
-        exit()
-
-
-bot.polling(none_stop = True)
+bot.polling()
