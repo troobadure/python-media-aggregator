@@ -5,10 +5,7 @@ import time
 def attach(bot, db_manager):
     @bot.message_handler(func=lambda message: message.text == 'fetch posts')
     def fetch_posts(message):
-        user_name = message.from_user.first_name
-
-        if message.from_user.last_name:
-            user_name = f"{user_name} {message.from_user.last_name}"
+        user_name = message.from_user.full_name
 
         db_manager.update_state(user_name,
                             'main_menu',
