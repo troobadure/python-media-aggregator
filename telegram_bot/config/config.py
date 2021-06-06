@@ -1,8 +1,8 @@
 import os
 
-DATABASE_URL = os.getenv('DATABASE_URL')
-if not DATABASE_URL:
-    print('You have not set DATABASE_URL')
+DATABASE_STRING = "dbname=postgres user=postgres host=localhost password=1111 port=5432"
+if not DATABASE_STRING:
+    print('You have not set DATABASE_PARAM')
     quit()    
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')

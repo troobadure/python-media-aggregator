@@ -1,15 +1,10 @@
 import telebot
-import glob
-import json
-import os
-import psycopg2
-# import config.config_heroku
 from keyboards import keyboards
 from db import dbmanager
 from loaders.loader import main
 import time
+from config.config import BOT_TOKEN
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 bot = telebot.TeleBot(BOT_TOKEN)
 dbmanager.init_db()

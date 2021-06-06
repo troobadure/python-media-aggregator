@@ -1,16 +1,8 @@
 import psycopg2
-
-__connection = None
-
+from config.config import DATABASE_STRING
 
 def get_connection():
-    db = psycopg2.connect(
-        dbname='postgres',
-        user='postgres',
-        host='localhost',
-        password='1111',
-        port='5432'
-    )
+    db = psycopg2.connect(DATABASE_STRING)
     return db
 
 
@@ -126,4 +118,4 @@ def get_state(user_id: str):
         return q[0]
 
     except TypeError:
-        return 'тайп эрр при вытаскивании стэйта'
+        return 'NoneType error on state fetch'
