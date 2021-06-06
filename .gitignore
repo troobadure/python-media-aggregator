@@ -3,3 +3,5 @@
 __pycache__
 notes.txt
 files/*
+ignore/
+local_run.py

@@ -1,9 +1,9 @@
 import telebot
+import time
+from config.config import BOT_TOKEN
 from keyboards import keyboards
 from db import dbmanager
 from loaders.loader import main
-import time
-from config.config import BOT_TOKEN
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
