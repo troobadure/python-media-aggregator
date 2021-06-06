@@ -2,7 +2,7 @@ from keyboards import keyboards
 import time
 
 
-def attach(bot, manager):
+def attach(bot, db_manager):
     @bot.message_handler(func=lambda message: message.text == 'get post')
     def get_post(message):
         user_name = message.from_user.first_name
@@ -10,7 +10,7 @@ def attach(bot, manager):
         if message.from_user.last_name:
             user_name = f"{user_name} {message.from_user.last_name}"
 
-        manager.update_state(user_name,
+        db_manager.update_state(user_name,
                             'main_menu',
                             time.strftime('%d/%m/%y, %X'),
                             message.chat.id)
@@ -19,7 +19,7 @@ def attach(bot, manager):
             "/home/leap_sunrise/python-media-aggregatorq/telegram_bot/db_proto/content/_score_shadowguy.__2020-10-04_14-38-25_1.mp4",
             'rb')
         bot.send_message(message.chat.id,
-                        'Видео обрабатывается...',
+                        'Видео обраебатывается...',
                         reply_markup=keyboards.main_menu_keyboard)
 
         bot.send_video(message.chat.id, video, timeout=60, reply_markup=keyboards.main_menu_keyboard)
