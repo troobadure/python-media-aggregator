@@ -1,13 +1,14 @@
 import telebot
 import time
-from config.config import BOT_TOKEN
+from config import config
 from keyboards import keyboards
-from db import dbmanager
+from database import manager
 from loaders.loader import main
 
 
-bot = telebot.TeleBot(BOT_TOKEN)
-dbmanager.init_db()
+bot = telebot.TeleBot(config.BOT_TOKEN)
+manager.init_db()
+
 
 @bot.message_handler(commands=['start', 'START'])
 def start_message(message):
@@ -20,7 +21,7 @@ def start_message(message):
                      f"Hellol, {user_name}",
                      reply_markup=keyboards.main_menu_keyboard)
 
-    dbmanager.register_user(message.chat.id,
+    manager.register_user(message.chat.id,
                             user_name,
                             'main_menu',
                             time.strftime('%d/%m/%y, %X'),
@@ -34,7 +35,7 @@ def fetch_posts(message):
     if message.from_user.last_name:
         user_name = f"{user_name} {message.from_user.last_name}"
 
-    dbmanager.update_state(user_name,
+    manager.update_state(user_name,
                            'main_menu',
                            time.strftime('%d/%m/%y, %X'),
                            message.chat.id)
@@ -52,7 +53,7 @@ def get_post(message):
     if message.from_user.last_name:
         user_name = f"{user_name} {message.from_user.last_name}"
 
-    dbmanager.update_state(user_name,
+    manager.update_state(user_name,
                            'main_menu',
                            time.strftime('%d/%m/%y, %X'),
                            message.chat.id)
@@ -77,7 +78,7 @@ def add_profile(message):
     if message.from_user.last_name:
         user_name = f"{user_name} {message.from_user.last_name}"
 
-    dbmanager.update_state(user_name,
+    manager.update_state(user_name,
                            'main_menu',
                            time.strftime('%d/%m/%y, %X'),
                            message.chat.id)
@@ -86,7 +87,7 @@ def add_profile(message):
                      'Выбери соц. сеть',
                      reply_markup=keyboards.add_profile_inline_keyboard)
 
-    print(dbmanager.get_state(message.chat.id)[0])
+    print(manager.get_state(message.chat.id)[0])
 
 
 @bot.message_handler(func=lambda message: message.text == 'add criteria')
@@ -96,7 +97,7 @@ def add_criteria(message):
     if message.from_user.last_name:
         user_name = f"{user_name} {message.from_user.last_name}"
 
-    dbmanager.update_state(user_name,
+    manager.update_state(user_name,
                            'main_menu',
                            time.strftime('%d/%m/%y, %X'),
                            message.chat.id)
@@ -110,7 +111,7 @@ def add_criteria(message):
 def picking_inst_soc(call):
 
     if call.data.startswith('add_profile'):
-        dbmanager.update_state('🇫🇮🌲',
+        manager.update_state('🇫🇮🌲',
                                f"inserting{call.data[call.data.find('_')::]}",
                                time.strftime('%d/%m/%y, %X'),
                                call.message.chat.id)
@@ -119,15 +120,15 @@ def picking_inst_soc(call):
                          f"Введи юзернейм профиля из {(call.data[call.data.find('_') + 9::]).capitalize()}",
                          reply_markup=keyboards.cancel_keyboard)
 
-        print(dbmanager.get_state(call.message.chat.id))
+        print(manager.get_state(call.message.chat.id))
 
 
 # curr_state == inserting inst uname
-@bot.message_handler(func=lambda message: (dbmanager.get_state(message.chat.id)).startswith('inserting_profile'))
+@bot.message_handler(func=lambda message: (manager.get_state(message.chat.id)).startswith('inserting_profile'))
 def inserting_inst_uname(message):
 
     if message.text == 'Отмена':
-        dbmanager.update_state('🇫🇮🌲',
+        manager.update_state('🇫🇮🌲',
                                'main_menu',
                                time.strftime('%d/%m/%y, %X'),
                                message.chat.id)
@@ -139,11 +140,10 @@ def inserting_inst_uname(message):
         bot.send_message(message.chat.id,
                          'В РАЗРАБОТКЕ',
                          reply_markup=keyboards.cancel_keyboard)
-        dbmanager.update_state('LOH',
+        manager.update_state('LOH',
                                'inserting_instagram_us',
                                time.strftime('%d/%m/%y, %X'),
                                message.chat.id)
-
 
 
 bot.polling()

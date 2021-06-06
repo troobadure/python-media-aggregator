@@ -1,8 +1,8 @@
 import psycopg2
-from config.config import DATABASE_STRING
+from config import config
 
 def get_connection():
-    db = psycopg2.connect(DATABASE_STRING)
+    db = psycopg2.connect(config.DATABASE_STRING)
     return db
 
 
