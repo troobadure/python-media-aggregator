@@ -7,10 +7,10 @@ def attach(bot, db_manager):
     def add_profile(message):
         user_name = message.from_user.full_name
 
-        db_manager.update_state(user_name,
-                            'main_menu',
-                            time.strftime('%d/%m/%y, %X'),
-                            message.chat.id)
+        db_manager.update_state(message.chat.id,
+                                user_name,
+                                'main_menu',
+                                time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(message.chat.id,
                         'Выбери соцюшку сю',
@@ -21,7 +21,6 @@ def attach(bot, db_manager):
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('add_'))
     def picking_inst_soc(call):
-
         if call.data.startswith('add_profile'):
             db_manager.update_state('🇫🇮🌲',
                                 f"inserting{call.data[call.data.find('_')::]}",
@@ -38,7 +37,6 @@ def attach(bot, db_manager):
     # curr_state == inserting inst uname
     @bot.message_handler(func=lambda message: (db_manager.get_state(message.chat.id)).startswith('inserting_profile'))
     def inserting_inst_uname(message):
-
         if message.text == 'Охрана':
             db_manager.update_state('🇫🇮🌲',
                                 'main_menu',
