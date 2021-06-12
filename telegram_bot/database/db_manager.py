@@ -39,7 +39,7 @@ def init_db():
 
     c.execute('''
     CREATE TABLE IF NOT EXISTS criterias (
-    criteria_id         int primary key,
+    criteria_id         serial primary key,
     profile_id          int,
     criteria_type       text,
     criteria_value      int,
@@ -130,5 +130,31 @@ def insert_profile(user_id, profile_type, profile_name):
     c.execute(
         'INSERT INTO profiles (user_id, profile_type, profile_name) VALUES (%s, %s, %s)',
         (user_id, profile_type, profile_name)
+    )
+    conn.commit()
+
+
+def get_profile_id(profile_type, profile_name):
+    try:
+        conn = get_connection()
+        c = conn.cursor()
+        c.execute(
+            'SELECT profile_id FROM profiles WHERE profile_type = %s and profile_name = %s',
+            (profile_type, profile_name)
+        )
+        
+        q = c.fetchone()
+        return q[0]
+
+    except TypeError:
+        return 'NoneType error on profile get'
+
+
+def insert_criteria(profile_id, criteria_type, criteria_value):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute(
+        'INSERT INTO criterias (profile_id, criteria_type, criteria_value) VALUES (%s, %s, %s)',
+        (profile_id, criteria_type, criteria_value)
     )
     conn.commit()

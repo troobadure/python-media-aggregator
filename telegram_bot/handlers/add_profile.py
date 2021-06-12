@@ -5,7 +5,7 @@ import time
 profile_type = 'initial type'
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'add profile')
+    @bot.message_handler(func=lambda message: message.text == 'Add profile' and db_manager.get_state(message.chat.id) == 'main_menu')
     def add_profile(message):
         user_id = message.chat.id
         user_name = message.from_user.full_name
@@ -17,10 +17,10 @@ def attach(bot, db_manager):
                                 
         bot.send_message(user_id,
                         'Выбери сосюцюшку',
-                        reply_markup=keyboards.add_profile_inline_keyboard)
+                        reply_markup=keyboards.select_profile_type_inline_keyboard)
 
 
-    @bot.callback_query_handler(func=lambda call: call.data.startswith('add_profile'))
+    @bot.callback_query_handler(func=lambda call: call.data.startswith('select_profile_') and db_manager.get_state(call.message.chat.id) == 'add_profile_type')
     def add_profile_type(call):
         global profile_type 
 
@@ -38,7 +38,7 @@ def attach(bot, db_manager):
                         reply_markup=keyboards.cancel_keyboard)
 
 
-    @bot.message_handler(func=lambda message: db_manager.get_state(message.chat.id) == 'add_profile_name' and message.text != 'Охрана')
+    @bot.message_handler(func=lambda message: message.text != 'Охрана' and db_manager.get_state(message.chat.id) == 'add_profile_name')
     def add_profile_name(message):
         global profile_type
 
