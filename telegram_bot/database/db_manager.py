@@ -29,7 +29,7 @@ def init_db():
 
     c.execute('''
     CREATE TABLE IF NOT EXISTS profiles (
-    profile_id          int  primary key,
+    profile_id          serial  primary key,
     user_id             int,
     profile_type        text,
     profile_name        text,
@@ -76,18 +76,24 @@ def init_db():
     foreign key(post_id) references posts(post_id)
     )
     ''')
+    
+    c.execute('''INSERT INTO users (user_id, user_name, curr_state) VALUES
+                (402027899, \'Vlood\', \'main_menu\')''')
 
     conn.commit()
 
 
-def register_user(user_id, user_name, curr_state, registration_date, last_activity):
+def insert_user(user_id, user_name, curr_state, registration_date, last_activity):
     conn = get_connection()
     c = conn.cursor()
-    c.execute(
-        'INSERT INTO users (user_id, user_name, curr_state, last_activity, registration_date) VALUES (%s, %s, %s, %s, %s)',
-        (user_id, user_name, curr_state, last_activity, registration_date)
-    )
-    conn.commit()
+    try:
+        c.execute(
+            'INSERT INTO users (user_id, user_name, curr_state, last_activity, registration_date) VALUES (%s, %s, %s, %s, %s)',
+            (user_id, user_name, curr_state, last_activity, registration_date)
+        )
+        conn.commit()
+    except psycopg2.errors.UniqueViolation:
+        print('User already exists')
 
 
 def update_state(user_id, user_name, curr_state, last_activity):
@@ -98,6 +104,8 @@ def update_state(user_id, user_name, curr_state, last_activity):
         (user_name, curr_state, last_activity, user_id)
     )
     conn.commit()
+
+    print(user_name + ' at ' + curr_state)
 
 
 def get_state(user_id: str):
@@ -114,3 +122,13 @@ def get_state(user_id: str):
 
     except TypeError:
         return 'NoneType error on state fetch'
+
+
+def insert_profile(user_id, profile_type, profile_name):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute(
+        'INSERT INTO profiles (user_id, profile_type, profile_name) VALUES (%s, %s, %s)',
+        (user_id, profile_type, profile_name)
+    )
+    conn.commit()

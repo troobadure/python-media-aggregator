@@ -6,8 +6,8 @@ main_menu_keyboard_fetch_posts_button = telebot.types.KeyboardButton("fetch post
 main_menu_keyboard_get_post_button = telebot.types.KeyboardButton("get post")
 main_menu_keyboard_add_profile_button = telebot.types.KeyboardButton("add profile")
 main_menu_keyboard_add_criteria_button = telebot.types.KeyboardButton("add criteria")
-main_menu_keyboard.add(main_menu_keyboard_fetch_posts_button, main_menu_keyboard_get_post_button)
 main_menu_keyboard.add(main_menu_keyboard_add_profile_button, main_menu_keyboard_add_criteria_button)
+main_menu_keyboard.add(main_menu_keyboard_fetch_posts_button, main_menu_keyboard_get_post_button)
 
 
 # add profile
@@ -38,4 +38,4 @@ add_criteria_inline_keyboard.add(add_criteria_inline_button_youtube)
 
 # cancel keyboard
 cancel_keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
-cancel_keyboard.add('Отмена')
+cancel_keyboard.add('Охрана')

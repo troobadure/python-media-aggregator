@@ -2,55 +2,59 @@ from keyboards import keyboards
 import time
 
 
+profile_type = 'initial type'
+
 def attach(bot, db_manager):
     @bot.message_handler(func=lambda message: message.text == 'add profile')
     def add_profile(message):
+        user_id = message.chat.id
         user_name = message.from_user.full_name
 
-        db_manager.update_state(message.chat.id,
+        db_manager.update_state(user_id,
                                 user_name,
-                                'main_menu',
+                                'add_profile_type',
                                 time.strftime('%d/%m/%y, %X'))
-
-        bot.send_message(message.chat.id,
-                        'Выбери соцюшку сю',
+                                
+        bot.send_message(user_id,
+                        'Выбери сосюцюшку',
                         reply_markup=keyboards.add_profile_inline_keyboard)
 
-        print(user_name + ' at ' + db_manager.get_state(message.chat.id)[0])
+
+    @bot.callback_query_handler(func=lambda call: call.data.startswith('add_profile'))
+    def add_profile_type(call):
+        global profile_type 
+
+        user_id = call.message.chat.id
+        user_name = call.message.from_user.full_name
+        profile_type = call.data[call.data.find('_') + 9::]
+
+        db_manager.update_state(user_id,
+                                user_name,
+                                'add_profile_name',
+                                time.strftime('%d/%m/%y, %X'))
+
+        bot.send_message(user_id,
+                        f"Введи юзерkek профile из {(call.data[call.data.find('_') + 9::]).capitalize()}",
+                        reply_markup=keyboards.cancel_keyboard)
 
 
-    @bot.callback_query_handler(func=lambda call: call.data.startswith('add_'))
-    def picking_inst_soc(call):
-        if call.data.startswith('add_profile'):
-            db_manager.update_state('🇫🇮🌲',
-                                f"inserting{call.data[call.data.find('_')::]}",
-                                time.strftime('%d/%m/%y, %X'),
-                                call.message.chat.id)
+    @bot.message_handler(func=lambda message: db_manager.get_state(message.chat.id) == 'add_profile_name' and message.text != 'Охрана')
+    def add_profile_name(message):
+        global profile_type
 
-            bot.send_message(call.message.chat.id,
-                            f"Введи юзернейм профиля из {(call.data[call.data.find('_') + 9::]).capitalize()}",
-                            reply_markup=keyboards.cancel_keyboard)
+        user_id = message.chat.id
+        user_name = message.from_user.full_name
+        profile_name = message.text
 
-            print(db_manager.get_state(call.message.chat.id))
+        db_manager.update_state(user_id,
+                            user_name,
+                            'main_menu',
+                            time.strftime('%d/%m/%y, %X'))
 
+        db_manager.insert_profile(user_id,
+                                profile_type,
+                                profile_name)
 
-    # curr_state == inserting inst uname
-    @bot.message_handler(func=lambda message: (db_manager.get_state(message.chat.id)).startswith('inserting_profile'))
-    def inserting_inst_uname(message):
-        if message.text == 'Охрана':
-            db_manager.update_state('🇫🇮🌲',
-                                'main_menu',
-                                time.strftime('%d/%m/%y, %X'),
-                                message.chat.id)
-            bot.send_message(message.chat.id,
-                            'Главное меню пева',
-                            reply_markup=keyboards.main_menu_keyboard)
-
-        else:
-            bot.send_message(message.chat.id,
-                            'РАЗРАБОТ',
-                            reply_markup=keyboards.cancel_keyboard)
-            db_manager.update_state('LOHs',
-                                'inserting_instagram_us',
-                                time.strftime('%d/%m/%y, %X'),
-                                message.chat.id)
+        bot.send_message(user_id,
+                        'Профуль запечатано',
+                        reply_markup=keyboards.main_menu_keyboard)
