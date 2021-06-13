@@ -4,7 +4,7 @@ from loaders import instagram_loader
 
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'Fetch posts' and db_manager.get_state(message.chat.id) == 'main_menu')
+    @bot.message_handler(func=lambda message: message.text == 'Завантажити публікації' and db_manager.get_state(message.chat.id) == 'main_menu')
     def fetch_posts(message):
         user_id = message.chat.id
         user_name = message.from_user.full_name
@@ -15,7 +15,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        '<i>(Starting the fetch)</i>',
+                        '<i>Завантаження публікацій розпочато</i>',
                         reply_markup=keyboards.cancel_keyboard,
                         parse_mode='HTML')
 
@@ -26,6 +26,6 @@ def attach(bot, db_manager):
                 instagram_loader.load_profile(profile.profile_name, likes_percentage, 30)
 
         bot.send_message(user_id,
-                        '<i>(Fetch COMPLETE)</i>',
+                        '<i>Завантаження публікацій завершено</i>',
                         reply_markup=keyboards.main_menu_keyboard,
                         parse_mode='HTML')

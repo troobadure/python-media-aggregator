@@ -3,7 +3,7 @@ import time
 
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'Next post' and db_manager.get_state(message.chat.id) == 'main_menu')
+    @bot.message_handler(func=lambda message: message.text == 'Наступна публікація' and db_manager.get_state(message.chat.id) == 'main_menu')
     def next_post(message):
         user_id = message.chat.id
         user_name = message.from_user.full_name

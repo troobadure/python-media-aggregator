@@ -7,7 +7,7 @@ criteria_profile_name = 'initial name crit'
 criteria_type = 'initial criteria type'
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'Add criteria' and db_manager.get_state(message.chat.id) == 'main_menu')
+    @bot.message_handler(func=lambda message: message.text == 'Додати критерій' and db_manager.get_state(message.chat.id) == 'main_menu')
     def add_criteria(message):
         user_id = message.chat.id
         user_name = message.from_user.full_name
@@ -18,7 +18,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
                                 
         bot.send_message(user_id,
-                        'Выбери сосюцюшку for crit',
+                        'Оберіть соціальну мережу',
                         reply_markup=keyboards.select_profile_type_inline_keyboard)
 
 
@@ -36,11 +36,11 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи юзерkek профile из {(call.data.split('select_profile_')[1]).capitalize()} for CRiT",
+                        f"Введіть назву профілю з {(call.data.split('select_profile_')[1]).capitalize()}",
                         reply_markup=keyboards.cancel_keyboard)
 
 
-    @bot.message_handler(func=lambda message: message.text != 'Охрана' and db_manager.get_state(message.chat.id) == 'add_criteria_profile_name')
+    @bot.message_handler(func=lambda message: message.text != 'Відміна' and db_manager.get_state(message.chat.id) == 'add_criteria_profile_name')
     def add_criteria_profile_name(message):
         global criteria_profile_type, criteria_profile_name
 
@@ -54,7 +54,7 @@ def attach(bot, db_manager):
                             time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        'Профуль отримано, далі критерія тип',
+                        'Профіль знайдено. Оберіть тип критерію',
                         reply_markup=keyboards.select_criteria_type_inline_keyboard)
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('select_criteria_') and db_manager.get_state(call.message.chat.id) == 'add_criteria_type')
@@ -71,11 +71,11 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи VALUE for {(call.data.split('select_criteria_')[1]).capitalize()} for CRiT crit CRIT",
+                        f"Введіть значення критерію",
                         reply_markup=keyboards.cancel_keyboard)
 
 
-    @bot.message_handler(func=lambda message: message.text != 'Охрана' and db_manager.get_state(message.chat.id) == 'add_criteria_name')
+    @bot.message_handler(func=lambda message: message.text != 'Відміна' and db_manager.get_state(message.chat.id) == 'add_criteria_name')
     def add_criteria_name(message):
         global criteria_profile_type, criteria_profile_name, criteria_type
 
@@ -95,5 +95,5 @@ def attach(bot, db_manager):
                                     criteria_name)
 
         bot.send_message(user_id,
-                        'Criteria donon',
+                        'Критерій додано',
                         reply_markup=keyboards.main_menu_keyboard)

@@ -5,7 +5,7 @@ import time
 profile_type = 'initial type'
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'Add profile' and db_manager.get_state(message.chat.id) == 'main_menu')
+    @bot.message_handler(func=lambda message: message.text == 'Додати профіль' and db_manager.get_state(message.chat.id) == 'main_menu')
     def add_profile(message):
         user_id = message.chat.id
         user_name = message.from_user.full_name
@@ -16,7 +16,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
                                 
         bot.send_message(user_id,
-                        'Выбери сосюцюшку',
+                        'Оберіть соціальну мережу',
                         reply_markup=keyboards.select_profile_type_inline_keyboard)
 
 
@@ -34,11 +34,11 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи юзерkek профile из {(call.data.split('select_profile_')[1]).capitalize()}",
+                        f"Введіть назву профілю {(call.data.split('select_profile_')[1]).capitalize()}",
                         reply_markup=keyboards.cancel_keyboard)
 
 
-    @bot.message_handler(func=lambda message: message.text != 'Охрана' and db_manager.get_state(message.chat.id) == 'add_profile_name')
+    @bot.message_handler(func=lambda message: message.text != 'Відміна' and db_manager.get_state(message.chat.id) == 'add_profile_name')
     def add_profile_name(message):
         global profile_type
 
@@ -56,5 +56,5 @@ def attach(bot, db_manager):
                                 profile_name)
 
         bot.send_message(user_id,
-                        'Профуль запечатано',
+                        'Профіль додано',
                         reply_markup=keyboards.main_menu_keyboard)

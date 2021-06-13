@@ -15,5 +15,5 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Hellol, {user_name}",
+                        f"Вітаю, {user_name}!",
                         reply_markup=keyboards.main_menu_keyboard)

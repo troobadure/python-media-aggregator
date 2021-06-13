@@ -2,10 +2,10 @@ import telebot
 
 # main menu
 main_menu_keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
-main_menu_keyboard_fetch_posts_button = telebot.types.KeyboardButton("Fetch posts")
-main_menu_keyboard_next_post_button = telebot.types.KeyboardButton("Next post")
-main_menu_keyboard_add_profile_button = telebot.types.KeyboardButton("Add profile")
-main_menu_keyboard_add_criteria_button = telebot.types.KeyboardButton("Add criteria")
+main_menu_keyboard_fetch_posts_button = telebot.types.KeyboardButton("Завантажити публікації")
+main_menu_keyboard_next_post_button = telebot.types.KeyboardButton("Наступна публікація")
+main_menu_keyboard_add_profile_button = telebot.types.KeyboardButton("Додати профіль")
+main_menu_keyboard_add_criteria_button = telebot.types.KeyboardButton("Додати критерій")
 main_menu_keyboard.add(main_menu_keyboard_add_profile_button, main_menu_keyboard_add_criteria_button)
 main_menu_keyboard.add(main_menu_keyboard_fetch_posts_button, main_menu_keyboard_next_post_button)
 
@@ -25,9 +25,9 @@ select_profile_type_inline_keyboard.add(select_profile_inline_button_youtube)
 
 # select criteria
 select_criteria_type_inline_keyboard = telebot.types.InlineKeyboardMarkup()
-select_criteria_inline_button_likesviews = telebot.types.InlineKeyboardButton(text='Likes/views',
+select_criteria_inline_button_likesviews = telebot.types.InlineKeyboardButton(text='Вподобання/перегляди',
                                                                         callback_data='select_criteria_likesviews')
-select_criteria_inline_button_hasvideo = telebot.types.InlineKeyboardButton(text='Includes video',
+select_criteria_inline_button_hasvideo = telebot.types.InlineKeyboardButton(text='Містить відео',
                                                                         callback_data='select_criteria_hasvideo')
 select_criteria_type_inline_keyboard.add(select_criteria_inline_button_likesviews)
 select_criteria_type_inline_keyboard.add(select_criteria_inline_button_hasvideo)
@@ -35,4 +35,4 @@ select_criteria_type_inline_keyboard.add(select_criteria_inline_button_hasvideo)
 
 # cancel keyboard
 cancel_keyboard = telebot.types.ReplyKeyboardMarkup(True, False)
-cancel_keyboard.add('Охрана')
+cancel_keyboard.add('Відміна')
