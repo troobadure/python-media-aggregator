@@ -3,7 +3,7 @@ import time
 
 
 def attach(bot, db_manager):
-    @bot.message_handler(func=lambda message: message.text == 'get post')
+    @bot.message_handler(func=lambda message: message.text == 'Get post')
     def get_post(message):
         user_name = message.from_user.full_name
 

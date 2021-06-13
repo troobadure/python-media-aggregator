@@ -26,7 +26,7 @@ def attach(bot, db_manager):
 
         user_id = call.message.chat.id
         user_name = call.message.from_user.full_name
-        profile_type = call.data[call.data.find('_') + 9::]
+        profile_type = call.data.split('select_profile_')[1]
 
         db_manager.update_state(user_id,
                                 user_name,
@@ -34,7 +34,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи юзерkek профile из {(call.data[call.data.find('_') + 9::]).capitalize()}",
+                        f"Введи юзерkek профile из {(call.data.split('select_profile_')[1]).capitalize()}",
                         reply_markup=keyboards.cancel_keyboard)
 
 

@@ -6,6 +6,12 @@ from pathlib import Path
 import os
 
 
+def load_profile(profile_name, likes_percentage, days_period):
+    loader = Instaloader_parameters('files/instagram', '{date_utc}__{target}')
+    loader.login_paremeters()
+    profiles = set([Profile.from_username(loader.context, profile_name)])
+    loader.download_profiles_custom_parameters(profiles, date_filter_factory(datetime.now()-timedelta(days=days_period)), post_filter_factory(likes_percentage))
+
 def main():
     inputs = open('telegram_bot/db_proto/profiles.txt', 'r')
     names = inputs.readlines()
@@ -20,8 +26,8 @@ def login_paremeters(self):
     return self.login('dankmemeloader', 'loaderdankmeme')
 setattr(Instaloader, 'login_paremeters', login_paremeters)
 
-def Instaloader_parameters(filename='{target}_{date_utc:%Y-%m-%d_%H-%M}'):
-    return Instaloader(sleep=False, quiet=False, user_agent=None, dirname_pattern='telegram_bot/db_proto/content', 
+def Instaloader_parameters(dirname='files/content', filename='{target}_{date_utc:%Y-%m-%d_%H-%M}'):
+    return Instaloader(sleep=False, quiet=False, user_agent=None, dirname_pattern=dirname, 
     filename_pattern=filename, download_pictures=True, download_videos=True, 
     download_video_thumbnails=False, download_geotags=False, download_comments=False, save_metadata=True, compress_json=False, 
     post_metadata_txt_pattern='{caption}\n_________\nLIKES: {likes}\nVIEWS: {video_view_count}\nCOMMENTS: {comments}', 
@@ -231,6 +237,8 @@ def download_post_custom(self, post: Post, target: Union[str, Path]) -> bool:
     dirname = instaloader._PostPathFormatter(post).format(self.dirname_pattern, target=target, score=score_str)
     filename = dirname + '/' + self.format_filename_custom(post, target=target, score=score_str)
     os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    # db_manager.insert_post(filename) need to make database writing here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     # Download the image(s) / video thumbnail and videos within sidecars if desired
     downloaded = True

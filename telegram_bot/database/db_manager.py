@@ -1,5 +1,6 @@
 import psycopg2
 from config import config
+import mock
 
 def get_connection():
     db = psycopg2.connect(config.DATABASE_STRING)
@@ -54,7 +55,6 @@ def init_db():
     profile_name        text,
     publication_date    text,
     download_date       text
-
     )''')
 
     c.execute('''
@@ -117,8 +117,7 @@ def get_state(user_id: str):
             (user_id,)
         )
 
-        q = c.fetchone()
-        return q[0]
+        return c.fetchone()[0]
 
     except TypeError:
         return 'NoneType error on state fetch'
@@ -134,17 +133,16 @@ def insert_profile(user_id, profile_type, profile_name):
     conn.commit()
 
 
-def get_profile_id(profile_type, profile_name):
+def get_profile_id(user_id, profile_type, profile_name):
     try:
         conn = get_connection()
         c = conn.cursor()
         c.execute(
-            'SELECT profile_id FROM profiles WHERE profile_type = %s and profile_name = %s',
-            (profile_type, profile_name)
+            'SELECT profile_id FROM profiles WHERE user_id = %s and profile_type = %s and profile_name = %s',
+            (user_id, profile_type, profile_name)
         )
         
-        q = c.fetchone()
-        return q[0]
+        return c.fetchone()[0]
 
     except TypeError:
         return 'NoneType error on profile get'
@@ -158,3 +156,41 @@ def insert_criteria(profile_id, criteria_type, criteria_value):
         (profile_id, criteria_type, criteria_value)
     )
     conn.commit()
+
+def get_profiles(user_id):
+    try:
+        conn = get_connection()
+        c = conn.cursor()
+        c.execute(
+            'SELECT (profile_id, profile_type, profile_name) FROM profiles WHERE user_id = %s',
+            (user_id, )
+        )
+        
+        res = c.fetchall()
+        def make_profile(raw_record):
+            record = raw_record[0].split('(')[1].split(')')[0].split(',')
+            profile = mock.Mock()
+            profile.profile_id = record[0]
+            profile.profile_type = record[1]
+            profile.profile_name = record[2]
+            return profile
+
+        profiles = map(make_profile, res)
+        return profiles
+
+    except TypeError:
+        return 'NoneType error on profiles get'
+
+def get_criteria_value(profile_id, criteria_type):
+    try:
+        conn = get_connection()
+        c = conn.cursor()
+        c.execute(
+            'SELECT criteria_value FROM criterias WHERE profile_id = %s and criteria_type = %s ORDER BY criteria_value',
+            (profile_id, criteria_type)
+        )
+        
+        return c.fetchone()[0]
+
+    except TypeError:
+        return 'NoneType error on criterias get'

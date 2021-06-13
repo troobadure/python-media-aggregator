@@ -28,7 +28,7 @@ def attach(bot, db_manager):
 
         user_id = call.message.chat.id
         user_name = call.message.from_user.full_name
-        criteria_profile_type = call.data[call.data.find('_') + 9::]
+        criteria_profile_type = call.data.split('select_profile_')[1]
 
         db_manager.update_state(user_id,
                                 user_name,
@@ -36,7 +36,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи юзерkek профile из {(call.data[call.data.find('_') + 9::]).capitalize()} for CRiT",
+                        f"Введи юзерkek профile из {(call.data.split('select_profile_')[1]).capitalize()} for CRiT",
                         reply_markup=keyboards.cancel_keyboard)
 
 
@@ -63,7 +63,7 @@ def attach(bot, db_manager):
 
         user_id = call.message.chat.id
         user_name = call.message.from_user.full_name
-        criteria_type = call.data[call.data.find('_') + 9::]
+        criteria_type = call.data.split('select_criteria_')[1]
 
         db_manager.update_state(user_id,
                                 user_name,
@@ -71,7 +71,7 @@ def attach(bot, db_manager):
                                 time.strftime('%d/%m/%y, %X'))
 
         bot.send_message(user_id,
-                        f"Введи VALUE из {(call.data[call.data.find('_') + 9::]).capitalize()} for CRiT crit CRIT",
+                        f"Введи VALUE for {(call.data.split('select_criteria_')[1]).capitalize()} for CRiT crit CRIT",
                         reply_markup=keyboards.cancel_keyboard)
 
 
@@ -88,7 +88,7 @@ def attach(bot, db_manager):
                                 'main_menu',
                                 time.strftime('%d/%m/%y, %X'))
 
-        criteria_profile_id = db_manager.get_profile_id(criteria_profile_type, criteria_profile_name)
+        criteria_profile_id = db_manager.get_profile_id(user_id, criteria_profile_type, criteria_profile_name)
 
         db_manager.insert_criteria(criteria_profile_id,
                                     criteria_type,
