@@ -3,11 +3,14 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from typing import Callable, Iterator, Optional, Set, Union
 from pathlib import Path
-import os
+import os, glob
 
 
 def load_profile(profile_name, likes_percentage, days_period):
-    loader = Instaloader_parameters('files/instagram', '{date_utc}__{target}')
+    for filename in glob.glob(f"files/instagram/{profile_name}_*"):
+        os.remove(filename) 
+
+    loader = Instaloader_parameters('files/instagram', '{target}_{date_utc}')
     loader.login_paremeters()
     profiles = set([Profile.from_username(loader.context, profile_name)])
     loader.download_profiles_custom_parameters(profiles, date_filter_factory(datetime.now()-timedelta(days=days_period)), post_filter_factory(likes_percentage))
