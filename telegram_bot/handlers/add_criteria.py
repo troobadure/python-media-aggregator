@@ -15,7 +15,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'add_criteria_profile_type',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
                                 
         bot.send_message(user_id,
                         'Оберіть соціальну мережу',
@@ -33,7 +33,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'add_criteria_profile_name',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
 
         bot.send_message(user_id,
                         f"Введіть назву профілю з {(call.data.split('select_profile_')[1]).capitalize()}",
@@ -51,7 +51,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                             user_name,
                             'add_criteria_type',
-                            time.strftime('%d/%m/%y, %X'))
+                            time.strftime('%Y-%m-%d %X'))
 
         bot.send_message(user_id,
                         'Профіль знайдено. Оберіть тип критерію',
@@ -68,7 +68,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'add_criteria_name',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
 
         bot.send_message(user_id,
                         f"Введіть значення критерію",
@@ -86,7 +86,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'main_menu',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
 
         criteria_profile_id = db_manager.get_profile_id(user_id, criteria_profile_type, criteria_profile_name)
 

@@ -3,12 +3,13 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from typing import Callable, Iterator, Optional, Set, Union
 from pathlib import Path
-import os, glob
+from database import db_manager
+import os, glob, time
 
 
 def load_profile(profile_name, likes_percentage, days_period):
     for filename in glob.glob(f"files/instagram/{profile_name}_*"):
-        os.remove(filename) 
+        os.remove(filename)
 
     loader = Instaloader_parameters('files/instagram', '{target}_{date_utc}')
     loader.login_paremeters()
@@ -238,10 +239,13 @@ def download_post_custom(self, post: Post, target: Union[str, Path]) -> bool:
     # score_str = str(score) + '_' + str(int(post.likes/post.video_view_count*100))
     score_str = 'score'
     dirname = instaloader._PostPathFormatter(post).format(self.dirname_pattern, target=target, score=score_str)
-    filename = dirname + '/' + self.format_filename_custom(post, target=target, score=score_str)
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    filename = self.format_filename_custom(post, target=target, score=score_str)
+    
+    # insert post record
+    db_manager.insert_post(post.mediaid, 'instagram', target, str(post.date), time.strftime('%Y-%m-%d %X'), filename)
 
-    # db_manager.insert_post(filename) need to make database writing here !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    filename = dirname + '/' + filename
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     # Download the image(s) / video thumbnail and videos within sidecars if desired
     downloaded = True

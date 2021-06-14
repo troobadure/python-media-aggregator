@@ -4,7 +4,7 @@ from database import db_manager
 from handlers import registration, add_profile, add_criteria, next_post, fetch_posts
 
 
-# db_manager.init_db()
+db_manager.init_db()
 bot = telebot.TeleBot(config.BOT_TOKEN)
 
 

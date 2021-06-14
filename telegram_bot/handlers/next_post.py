@@ -11,7 +11,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'main_menu',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
 
         bot.send_message(user_id,
                         'Обробка публікації...',

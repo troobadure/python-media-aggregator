@@ -50,18 +50,19 @@ def init_db():
 
     c.execute('''
     CREATE TABLE IF NOT EXISTS posts (
-    post_id             int primary key,
+    post_id             text    primary key,
     profile_type        text,
     profile_name        text,
     publication_date    text,
-    download_date       text
+    download_date       text,
+    filename            text
     )''')
 
     c.execute('''
     CREATE TABLE IF NOT EXISTS seen_posts (
     seen_post_id        int primary key,
     user_id             int,
-    post_id             int,
+    post_id             text,
     view_date           text,
     
     foreign key(user_id) references users(user_id),
@@ -71,7 +72,7 @@ def init_db():
     c.execute('''
     CREATE TABLE IF NOT EXISTS files (
     path                text primary key,
-    post_id             int,
+    post_id             text,
     
     foreign key(post_id) references posts(post_id)
     )
@@ -109,9 +110,9 @@ def update_state(user_id, user_name, curr_state, last_activity):
 
 
 def get_state(user_id: str):
+    conn = get_connection()
+    c = conn.cursor()
     try:
-        conn = get_connection()
-        c = conn.cursor()
         c.execute(
             'SELECT curr_state FROM users WHERE user_id = %s',
             (user_id,)
@@ -134,9 +135,9 @@ def insert_profile(user_id, profile_type, profile_name):
 
 
 def get_profile_id(user_id, profile_type, profile_name):
+    conn = get_connection()
+    c = conn.cursor()
     try:
-        conn = get_connection()
-        c = conn.cursor()
         c.execute(
             'SELECT profile_id FROM profiles WHERE user_id = %s and profile_type = %s and profile_name = %s',
             (user_id, profile_type, profile_name)
@@ -157,10 +158,11 @@ def insert_criteria(profile_id, criteria_type, criteria_value):
     )
     conn.commit()
 
+
 def get_profiles(user_id):
+    conn = get_connection()
+    c = conn.cursor()
     try:
-        conn = get_connection()
-        c = conn.cursor()
         c.execute(
             'SELECT (profile_id, profile_type, profile_name) FROM profiles WHERE user_id = %s',
             (user_id, )
@@ -179,12 +181,13 @@ def get_profiles(user_id):
         return profiles
 
     except TypeError:
-        return 'NoneType error on profiles get'
+        return []
+
 
 def get_criteria_value(profile_id, criteria_type):
+    conn = get_connection()
+    c = conn.cursor()
     try:
-        conn = get_connection()
-        c = conn.cursor()
         c.execute(
             'SELECT criteria_value FROM criterias WHERE profile_id = %s and criteria_type = %s ORDER BY criteria_value',
             (profile_id, criteria_type)
@@ -193,4 +196,18 @@ def get_criteria_value(profile_id, criteria_type):
         return c.fetchone()[0]
 
     except TypeError:
-        return 'NoneType error on criterias get'
+        return 0
+
+
+def insert_post(post_id, profile_type, profile_name, publication_date, download_date, filename):
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            'INSERT INTO posts (post_id, profile_type, profile_name, publication_date, download_date, filename) VALUES (%s, %s, %s, %s, %s, %s)',
+            (post_id, profile_type, profile_name, publication_date, download_date, filename)
+        )
+        conn.commit()
+
+    except psycopg2.errors.UniqueViolation:
+        print('Post already exists')

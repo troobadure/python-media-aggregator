@@ -13,7 +13,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'add_profile_type',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
                                 
         bot.send_message(user_id,
                         'Оберіть соціальну мережу',
@@ -31,7 +31,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                                 user_name,
                                 'add_profile_name',
-                                time.strftime('%d/%m/%y, %X'))
+                                time.strftime('%Y-%m-%d %X'))
 
         bot.send_message(user_id,
                         f"Введіть назву профілю {(call.data.split('select_profile_')[1]).capitalize()}",
@@ -49,7 +49,7 @@ def attach(bot, db_manager):
         db_manager.update_state(user_id,
                             user_name,
                             'main_menu',
-                            time.strftime('%d/%m/%y, %X'))
+                            time.strftime('%Y-%m-%d %X'))
 
         db_manager.insert_profile(user_id,
                                 profile_type,
