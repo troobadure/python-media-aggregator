@@ -18,11 +18,12 @@ def attach(bot, db_manager):
                         reply_markup=keyboards.cancel_keyboard)
 
         last_post = db_manager.get_last_post();
+        
         if last_post == 0:
             bot.send_message(user_id,
-                        'Ви переглянули всі завантажені публікації',
-                        reply_markup=keyboards.main_menu_keyboard,
-                        parse_mode='HTML')
+                            'Ви переглянули всі завантажені публікації',
+                            reply_markup=keyboards.main_menu_keyboard,
+                            parse_mode='HTML')
             exit()
 
         file_pattern = 'files/' + last_post.profile_type + '/' + last_post.filename
@@ -34,14 +35,17 @@ def attach(bot, db_manager):
             if last_post.filename in f:
                 filename = 'files/' + last_post.profile_type + '/' + f
                 ext = f.split('.')[1]
+
                 if ext == 'jpg':
                     image = open(filename, 'rb')
                     bot.send_photo(user_id, image, timeout=10, reply_markup=keyboards.main_menu_keyboard)
                     image.close()
+
                 elif ext == 'mp4':
                     video = open(filename, 'rb')
                     bot.send_video(user_id, video, timeout=60, reply_markup=keyboards.main_menu_keyboard)
                     video.close()
+
                 os.remove(filename)
 
         db_manager.delete_post(last_post.post_id);
