@@ -24,8 +24,8 @@ def init_db():
     user_id             int  primary key,
     user_name           text,
     curr_state          text,
-    registration_date   text,
-    last_activity       text
+    registration_date   timestamp,
+    last_activity       timestamp
      );''')
 
     c.execute('''
@@ -53,8 +53,8 @@ def init_db():
     post_id             text    primary key,
     profile_type        text,
     profile_name        text,
-    publication_date    text,
-    download_date       text,
+    publication_date    timestamp,
+    download_date       timestamp,
     filename            text
     )''')
 
@@ -78,8 +78,8 @@ def init_db():
     )
     ''')
     
-    c.execute('''INSERT INTO users (user_id, user_name, curr_state) VALUES
-                (402027899, \'Vlood\', \'main_menu\')''')
+    c.execute('''INSERT INTO users (user_id, user_name, curr_state, registration_date, last_activity) VALUES
+                (402027899, \'Vlood\', \'main_menu\', \'2021-06-06 13:44:47\', \'2021-06-06 13:44:47\')''')
 
     conn.commit()
 
@@ -211,3 +211,39 @@ def insert_post(post_id, profile_type, profile_name, publication_date, download_
 
     except psycopg2.errors.UniqueViolation:
         print('Post already exists')
+
+
+def get_last_post():
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            'SELECT (post_id, profile_type, profile_name, publication_date, filename) FROM posts ORDER BY publication_date DESC LIMIT 1'
+        )
+        
+        res = c.fetchone()
+        record = res[0].split('(')[1].split(')')[0].split(',')
+        post = mock.Mock()
+        post.post_id = record[0]
+        post.profile_type = record[1]
+        post.profile_name = record[2]
+        post.publication_date = record[3]
+        post.filename = record[4]
+        return post
+
+    except TypeError:
+        return 0
+
+    
+def delete_post(post_id):
+    conn = get_connection()
+    c = conn.cursor()
+    try:
+        c.execute(
+            'DELETE FROM posts WHERE post_id = %s',
+            (post_id,)
+        )
+        conn.commit()
+
+    except TypeError:
+        return 'NoneType error on post delete'

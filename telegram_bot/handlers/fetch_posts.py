@@ -23,7 +23,7 @@ def attach(bot, db_manager):
         for profile in profiles:
             if profile.profile_type == 'instagram':
                 likes_percentage = db_manager.get_criteria_value(profile.profile_id, 'likesviews')
-                instagram_loader.load_profile(profile.profile_name, likes_percentage, 30)
+                instagram_loader.load_profile(profile.profile_name, likes_percentage, 40)
 
         bot.send_message(user_id,
                         '<i>Завантаження публікацій завершено</i>',
